@@ -1,36 +1,57 @@
----
-title: About package README files
----
+# safelaunch
 
-We highly recommend including a `README.md` file in your package directory as it helps developers find your package on npm and have a good experience using your code in their projects. In most cases `README.md` files include directions for _installing_, _configuring_, and _using_ the code in your package; as well as any other information a user may find helpful. Just like in any GitHub repository, the `README.md` file will be rendered on the package's page. On [npmjs.com](https://www.npmjs.com/), the `README.md` is rendered as [GitHub Flavored Markdown](https://github.github.com/gfm/) via [GitHub's API](https://docs.github.com/en/rest/markdown/markdown).
+Catch what breaks production before it breaks.
 
-An npm package `README.md` file **must** be in the root-level directory of the package.
+safelaunch validates your local environment against a required environment contract before you push to production. No more missing variables. No more runtime mismatches. No more production surprises.
 
-## Creating and adding a `README.md` file to a package
+## Install
+```bash
+npm install -g safelaunch
+```
 
-1. In a text editor, in your package root directory, create a file called `README.md`.
-2. In the `README.md` file, add useful information about your package.
-3. Save the `README.md` file.
+## Quick Start
 
-<Note>
+Create an `env.manifest.json` file in your project:
+```json
+{
+  "version": "1",
+  "runtime": {
+    "node": "20"
+  },
+  "variables": {
+    "DATABASE_URL": {
+      "required": true,
+      "description": "PostgreSQL connection string"
+    },
+    "API_KEY": {
+      "required": true,
+      "description": "External API key"
+    }
+  }
+}
+```
 
-**Note:** The file extension `.md` indicates a Markdown file. For more information about Markdown, see the GitHub Guide "[Mastering Markdown](https://guides.github.com/features/mastering-markdown/#what)".
+Then run:
+```bash
+safelaunch validate
+```
 
-</Note>
+## What it checks
 
-## Updating an existing package `README.md` file
+- Missing required environment variables
+- Runtime version mismatches
 
-The `README.md` file will only be updated on the package page when you publish a new version of your package. To update your `README.md` file:
+## CI Integration
 
-1. In a text editor, update the contents of the `README.md` file.
+Add to your GitHub Actions workflow:
+```yaml
+- name: Install safelaunch
+  run: npm install -g safelaunch
 
-2. Save the `README.md` file.
+- name: Validate environment
+  run: safelaunch validate
+```
 
-3. On the command line, in the package root directory, run the following commands:
+## Built by Orches
 
-   ```
-   npm version patch
-   npm publish
-   ```
-
-[markdown-link]: https://guides.github.com/features/mastering-markdown/#what
+Part of the Orches Backend Reliability Infrastructure.
